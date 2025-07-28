@@ -4,11 +4,9 @@
 
 {% block head_title widget_title | trans %}
 {% block section_title widget_title | trans %}
-
 {% block action %}
-    {{ createActionButton('/antelope-gui/create', 'Create Antelope' | trans) }}
+    {{ createActionButton('/antelope-gui/create-antelope', 'Create Antelope' | trans) }}
 {% endblock %}
-
 {% block content %}
     {% embed '@Gui/Partials/widget.twig' %}
         {% block widget_content %}
