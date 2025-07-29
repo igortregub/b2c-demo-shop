@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<statemachine
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="spryker:oms-01"
+    xsi:schemaLocation="spryker:oms-01 http://static.spryker.com/oms-01.xsd">
+
+    <process name="CustomOrderProcess03" main="true">
+        <states>
+            <state name="new"/>
+            <state name="paid"/>
+            <state name="shipped"/>
+            <state name="canceled"/>
+            <state name="closed"/>
+        </states>
+
+        <transitions>
+            <transition happy="true" condition="CustomOrderProcess/IsPaymentAuthorized">
+                <source>new</source>
+                <target>paid</target>
+                <event>authorize_payment</event>
+            </transition>
+            <transition>
+                <source>new</source>
+                <target>canceled</target>
+                <event>cancel_order</event>
+            </transition>
+            <transition happy="true">
+                <source>paid</source>
+                <target>shipped</target>
+                <event>ready_to_ship</event>
+            </transition>
+            <transition happy="true">
+                <source>shipped</source>
+                <target>closed</target>
+                <event>ship_order</event>
+            </transition>
+        </transitions>
+
+        <events>
+            <event name="authorize_payment" onEnter="true" command="CustomOrderProcess/Authorise"/>
+            <event name="ready_to_ship" manual="true" onEnter="true"/>
+            <event name="ship_order" manual="true" command="CustomOrderProcess/Ship"/>
+            <event name="cancel_order" manual="true"/>
+        </events>
+    </process>
+</statemachine>

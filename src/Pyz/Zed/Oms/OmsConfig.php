@@ -11,6 +11,8 @@ use Spryker\Zed\Oms\OmsConfig as SprykerOmsConfig;
 
 class OmsConfig extends SprykerOmsConfig
 {
+    public const string CUSTOM_ORDER_PROCESS = 'CUSTOM_ORDER_PROCESS';
+
     /**
      * @return string
      */
