@@ -1,19 +1,18 @@
 <?php
-
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace Pyz\Client\Antelope;
 
+use Generated\Shared\Transfer\AntelopeCollectionTransfer;
 use Generated\Shared\Transfer\AntelopeCriteriaTransfer;
 use Generated\Shared\Transfer\AntelopeResponseTransfer;
 
 /**
- * @method \Pyz\Client\Antelope\AntelopeFactory getFactory()
+ * @method AntelopeFactory getFactory()
  */
 interface AntelopeClientInterface
 {
     public function getAntelope(AntelopeCriteriaTransfer $antelopeCriteriaTransfer): AntelopeResponseTransfer;
+
+    public function getAntelopeCollection(AntelopeCriteriaTransfer $criteriaTransfer): AntelopeCollectionTransfer;
 }

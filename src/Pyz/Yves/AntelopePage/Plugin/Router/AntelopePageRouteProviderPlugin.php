@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Pyz\Yves\AntelopePage\Plugin\Router;
 
 use Spryker\Yves\Router\Plugin\RouteProvider\AbstractRouteProviderPlugin;
@@ -12,6 +12,7 @@ class AntelopePageRouteProviderPlugin extends AbstractRouteProviderPlugin
     public function addRoutes(RouteCollection $routeCollection): RouteCollection
     {
         $routeCollection = $this->addAntelopeAntelopeGetRoute($routeCollection);
+        $routeCollection = $this->addAntelopeAntelopeCollectionGetRoute($routeCollection);
 
         return $routeCollection;
     }
@@ -19,11 +20,30 @@ class AntelopePageRouteProviderPlugin extends AbstractRouteProviderPlugin
     private function addAntelopeAntelopeGetRoute(
         RouteCollection $routeCollection
     ): RouteCollection {
-        $route = $this->buildRoute('/antelope/{name}', 'AntelopePage',
-            'Antelope', 'getAction');
+        $route = $this->buildRoute(
+            '/antelope/{name}',
+            'AntelopePage',
+            'Antelope',
+            'getAction'
+        );
         $route = $route->setMethods(['GET']);
-        $routeCollection->add(static::ROUTE_NAME_ANTELOPE_NAME,
-            $route);
+        $routeCollection->add(
+            static::ROUTE_NAME_ANTELOPE_NAME,
+            $route
+        );
+
+        return $routeCollection;
+    }
+
+    private function addAntelopeAntelopeCollectionGetRoute(
+        RouteCollection $routeCollection
+    ): RouteCollection {
+        $route = $this->buildRoute('/antelopes/', 'AntelopePage', 'Antelope', 'indexAction');
+        $route = $route->setMethods(['GET']);
+        $routeCollection->add(
+            static::ROUTE_NAME_ANTELOPE_NAME,
+            $route
+        );
 
         return $routeCollection;
     }
