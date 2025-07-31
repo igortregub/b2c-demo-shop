@@ -1,22 +1,19 @@
 <?php
 
-namespace Pyz\Zed\Antelope\Business\Writer;
+namespace Pyz\Zed\Antelope\Business\Updater;
 
 use Generated\Shared\Transfer\AntelopeTransfer;
 use Pyz\Zed\Antelope\Persistence\AntelopeEntityManagerInterface;
 
-/**
- *
- */
-class AntelopeWriter implements AntelopeWriterInterface
+class AntelopeUpdater implements AntelopeUpdaterInterface
 {
     public function __construct(
         protected AntelopeEntityManagerInterface $antelopeEntityManager
     ) {
     }
 
-    public function createAntelope(AntelopeTransfer $antelopeTransfer
+    public function updateAntelope(AntelopeTransfer $antelopeTransfer
     ): AntelopeTransfer {
-        return $this->antelopeEntityManager->createAntelope($antelopeTransfer);
+        return $this->antelopeEntityManager->updateAntelope($antelopeTransfer);
     }
 }

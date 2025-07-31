@@ -1,6 +1,6 @@
 {% extends '@Gui/Layout/layout.twig' %}
 
-{% set widget_title = 'Create Antelope' %}
+{% set widget_title = 'Update Antelope' %}
 {% block content %}
     {% embed '@Gui/Partials/widget.twig' %}
         {% block widget_content %}
@@ -9,7 +9,7 @@
                 {{ form_row(field) }}
             {% endfor %}
             <input type="submit" class="btn btn-primary"
-                   value="{{ 'Create antelope' | trans }}">
+                   value="{{ 'Update antelope' | trans }}">
             {{ form_end(antelopeCreateForm) }}
 
         {% endblock %}

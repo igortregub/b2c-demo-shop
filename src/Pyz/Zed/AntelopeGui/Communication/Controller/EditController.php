@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of the Spryker Commerce OS.
  * For full license information, please view the LICENSE file that was distributed with this source code.
@@ -9,7 +7,8 @@ declare(strict_types=1);
 
 namespace Pyz\Zed\AntelopeGui\Communication\Controller;
 
-use Generated\Shared\Transfer\AntelopeTransfer;
+use Generated\Shared\Transfer\AntelopeConditionTransfer;
+use Generated\Shared\Transfer\AntelopeCriteriaTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @method \Pyz\Zed\AntelopeGui\Communication\AntelopeGuiCommunicationFactory getFactory()
  */
-class CreateController extends AbstractController
+class EditController extends AbstractController
 {
     /**
      * @var string
@@ -28,18 +27,37 @@ class CreateController extends AbstractController
     /**
      * @var string
      */
-    protected const ANTELOPE_SUCCESSFULLY_CREATED = 'Antelope successfully created';
+    protected const ANTELOPE_SUCCESSFULLY_UPDATE = 'Antelope successfully updated';
 
-    public function indexAction(Request $request): array|RedirectResponse
+    /**
+     * @var string
+     */
+    protected const ANTELOPE_BADREQUEST_MESSAGE = 'Wrong id antelope';
+
+    /**
+     * @var string
+     */
+    protected const URL_PARAM_ID_ANTELOPE = 'id-antelope';
+
+    public function indexAction(Request $request): array
     {
-        $antelopeTransfer = new AntelopeTransfer();
+        $idAntelope = $this->getIdAntelope($request);
+        if (!$idAntelope) {
+            return $this->redirectWithError();
+        }
+
+        $antelopeConditions = new AntelopeConditionTransfer();
+        $antelopeConditions->setIdAntelope($idAntelope);
+        $antelopeCriteria = new AntelopeCriteriaTransfer();
+        $antelopeCriteria->setAntelopeConditions($antelopeConditions);
+        $antelopeTransfer = $this->getFactory()->createAntelopeDataProvider()->getData($antelopeCriteria);
         $options = $this->getOptions();
         $antelopeForm = $this->getFactory()->createAntelopeCreateForm(
             $antelopeTransfer,
             $options,
         )->handleRequest($request);
         if ($antelopeForm->isSubmitted() && $antelopeForm->isValid()) {
-            return $this->createAntelope($antelopeForm);
+            return $this->updateAntelope($antelopeForm);
         }
 
         return $this->viewResponse([
@@ -52,7 +70,7 @@ class CreateController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function createAntelope(
+    public function updateAntelope(
         FormInterface $antelopeForm,
     ): RedirectResponse {
         /**
@@ -61,8 +79,8 @@ class CreateController extends AbstractController
         $antelopeTransfer = $antelopeForm->getData();
         // $antelopeTransfer->setTypeId(1);
         // $antelopeTransfer->setLocationId(1);
-        $this->getFactory()->getAntelopeFacade()->createAntelope($antelopeTransfer);
-        $this->addSuccessMessage(static::ANTELOPE_SUCCESSFULLY_CREATED);
+        $this->getFactory()->getAntelopeFacade()->updateAntelope($antelopeTransfer);
+        $this->addSuccessMessage(static::ANTELOPE_SUCCESSFULLY_UPDATE);
 
         return $this->redirectResponse(static::ANTELOPE_GUI_URL);
     }
@@ -77,5 +95,17 @@ class CreateController extends AbstractController
 
         return $this->getFactory()->createAntelopeDataProvider()
             ->getOptions($types, $locations);
+    }
+
+    protected function getIdAntelope(Request $request): int
+    {
+        return $request->query->getInt(static::URL_PARAM_ID_ANTELOPE);
+    }
+
+    protected function redirectWithError(): RedirectResponse
+    {
+        $this->addErrorMessage(static::ANTELOPE_BADREQUEST_MESSAGE);
+
+        return $this->redirectResponse(static::ANTELOPE_GUI_URL);
     }
 }

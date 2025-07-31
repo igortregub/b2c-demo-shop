@@ -9,26 +9,30 @@ declare(strict_types=1);
 
 namespace Pyz\Zed\AntelopeGui;
 
-use Orm\Zed\Antelope\Persistence\PyzAntelopeQuery;
+use Orm\Zed\Antelope\Persistence\PyzAntelopeTypeQuery;
 use Spryker\Zed\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
 class AntelopeGuiDependencyProvider extends AbstractBundleDependencyProvider
 {
-    public const string FACADE_ANTELOPE = 'FACADE_ANTELOPE';
+    /**
+     * @var string
+     */
+    public const FACADE_ANTELOPE = 'FACADE_ANTELOPE';
 
-    public const string PROPEL_QUERY_ANTELOPE = 'PROPEL_QUERY_ANTELOPE';
+    /**
+     * @var string
+     */
+    public const PROPEL_QUERY_ANTELOPE = 'PROPEL_QUERY_ANTELOPE';
 
     public function provideCommunicationLayerDependencies(Container $container): Container
     {
-        $container = parent::provideCommunicationLayerDependencies($container);
-
         $container = $this->addAntelopeFacade($container);
 
         return $this->addAntelopePropelQuery($container);
     }
 
-    protected function addAntelopeFacade(Container $container): Container
+    private function addAntelopeFacade($container): Container
     {
         $container->set(
             static::FACADE_ANTELOPE,
@@ -40,12 +44,14 @@ class AntelopeGuiDependencyProvider extends AbstractBundleDependencyProvider
         return $container;
     }
 
-    protected function addAntelopePropelQuery(Container $container): Container
+    private function addAntelopePropelQuery(Container $container): Container
     {
         $container->set(
             static::PROPEL_QUERY_ANTELOPE,
             $container->factory(function () {
-                return PyzAntelopeQuery::create();
+                return PyzAntelopeQuery::create()
+                    ->joinWithPyzAntelopeLocation()
+                    ->joinWithPyzAntelopeType();
             }),
         );
 

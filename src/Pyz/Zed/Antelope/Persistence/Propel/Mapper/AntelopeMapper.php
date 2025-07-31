@@ -5,53 +5,72 @@
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Pyz\Zed\Antelope\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\AntelopeCollectionTransfer;
+use Generated\Shared\Transfer\AntelopeLocationTransfer;
 use Generated\Shared\Transfer\AntelopeTransfer;
+use Generated\Shared\Transfer\AntelopeTypeTransfer;
 use Orm\Zed\Antelope\Persistence\Base\PyzAntelope;
-use Propel\Runtime\Collection\Collection;
+use Orm\Zed\AntelopeLocation\Persistence\Base\PyzAntelopeLocation;
+use Orm\Zed\AntelopeType\Persistence\PyzAntelopeType;
+use Propel\Runtime\Collection\ObjectCollection;
 
-class AntelopeMapper
+class AntelopeMapper implements AntelopeMapperInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\AntelopeTransfer $antelopeTransfer
-     * @param \Orm\Zed\Antelope\Persistence\Base\PyzAntelope $entity
-     *
-     * @return \Orm\Zed\Antelope\Persistence\Base\PyzAntelope
-     */
-    public function mapAntelopeTransferToEntity(AntelopeTransfer $antelopeTransfer, PyzAntelope $entity): PyzAntelope
-    {
-        return $entity->fromArray($antelopeTransfer->toArray());
+    public function mapAntelopeTransferToAntelopeEntity(
+        AntelopeTransfer $antelopeTransfer,
+        PyzAntelope $antelope,
+    ): PyzAntelope {
+        return $antelope->fromArray($antelopeTransfer->toArray());
     }
 
-    /**
-     * @param \Propel\Runtime\Collection\Collection $entityCollection
-     *
-     * @return \Generated\Shared\Transfer\AntelopeCollectionTransfer
-     */
-    public function mapAntelopeEntityCollectionToAntelopeCollectionTransfer(
-        Collection $entityCollection,
+    public function mapAntelopeCollectionToAntelopeCollectionTransfer(
+        ObjectCollection $antelopeCollection,
+        AntelopeCollectionTransfer $antelopeCollectionTransfer,
     ): AntelopeCollectionTransfer {
-        $antelopeCollectionTransfer = new AntelopeCollectionTransfer();
-        foreach ($entityCollection as $entity) {
-            $antelopeTransfer = new AntelopeTransfer();
-            $antelopeCollectionTransfer->addAntelope($this->mapEntityToAntelopeTransfer($entity, $antelopeTransfer));
+        foreach ($antelopeCollection as $antelope) {
+            $antelopeDto = $this->mapAntelopeEntityToAntelopeTransfer($antelope, new AntelopeTransfer());
+            $antelopeCollectionTransfer->addAntelope($antelopeDto);
         }
 
         return $antelopeCollectionTransfer;
     }
 
-    /**
-     * @param array $entity
-     * @param \Generated\Shared\Transfer\AntelopeTransfer $antelopeTransfer
-     *
-     * @return \Generated\Shared\Transfer\AntelopeTransfer
-     */
-    public function mapEntityToAntelopeTransfer(
-        PyzAntelope $entity,
+    public function mapAntelopeEntityToAntelopeTransfer(
+        PyzAntelope $antelope,
         AntelopeTransfer $antelopeTransfer,
     ): AntelopeTransfer {
-        return $antelopeTransfer->fromArray($entity->toArray(), true);
+        $antelopeTransfer->fromArray($antelope->toArray(), true);
+        $type = $this->mapAntelopeTypeEntityToAntelopeTypeTransfer(
+            $antelope->getPyzAntelopeType(),
+            new AntelopeTypeTransfer(),
+        );
+
+        $antelopeTransfer->setType($type);
+        $location = $this->mapAntelopeLocationEntityToAntelopeLocationTransfer(
+            $antelope->getPyzAntelopeLocation(),
+            new AntelopeLocationTransfer(),
+        );
+
+        $antelopeTransfer->setLocation($location);
+
+        return $antelopeTransfer;
+    }
+
+    public function mapAntelopeTypeEntityToAntelopeTypeTransfer(
+        PyzAntelopeType $antelopeType,
+        AntelopeTypeTransfer $antelopeTypeTransfer,
+    ): AntelopeTypeTransfer {
+        return $antelopeTypeTransfer->fromArray($antelopeType->toArray(), true);
+    }
+
+    public function mapAntelopeLocationEntityToAntelopeLocationTransfer(
+        PyzAntelopeLocation $antelopeLocation,
+        AntelopeLocationTransfer $antelopeLocationTransfer,
+    ): AntelopeLocationTransfer {
+        return $antelopeLocationTransfer->fromArray($antelopeLocation->toArray(), true);
     }
 }
