@@ -1,118 +1,104 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of the Spryker Commerce OS.
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Pyz\Zed\AntelopeGui\Communication\Table;
 
+use Orm\Zed\Antelope\Persistence\Map\PyzAntelopeLocationTableMap;
 use Orm\Zed\Antelope\Persistence\Map\PyzAntelopeTableMap;
 use Orm\Zed\Antelope\Persistence\PyzAntelope;
 use Orm\Zed\Antelope\Persistence\PyzAntelopeQuery;
-use Orm\Zed\AntelopeLocation\Persistence\Map\PyzAntelopeLocationTableMap;
-use Orm\Zed\AntelopeType\Persistence\Map\PyzAntelopeTypeTableMap;
-use Spryker\Service\UtilText\Model\Url\Url;
+use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\Gui\Communication\Table\AbstractTable;
 use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
 
 class AntelopeTable extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected const TABLE_COL_ACTION = 'Actions';
+    public const string COL_ID_ANTELOPE = PyzAntelopeTableMap::COL_ID_ANTELOPE;
+
+    public const string COL_NAME = PyzAntelopeTableMap::COL_NAME;
+    public const string COL_ANTELOPE_LOCATION_NAME = PyzAntelopeLocationTableMap::COL_LOCATION_NAME;
+
 
     public function __construct(protected PyzAntelopeQuery $antelopeQuery)
     {
     }
 
+    /**
+     * @param TableConfiguration $config
+     *
+     * @return TableConfiguration
+     */
     protected function configure(TableConfiguration $config): TableConfiguration
     {
         $config->setHeader([
-            PyzAntelopeTableMap::COL_IDANTELOPE => 'Id',
-            PyzAntelopeTableMap::COL_NAME => 'Name',
-            PyzAntelopeTableMap::COL_COLOR => 'Color',
-            PyzAntelopeLocationTableMap::COL_LOCATION_NAME => 'Location',
-            PyzAntelopeTypeTableMap::COL_TYPE_NAME => 'Type',
-            static::TABLE_COL_ACTION => 'Actions',
+            static::COL_ID_ANTELOPE => 'Antelope ID',
+            static::COL_NAME => 'Name',
+            static::COL_ANTELOPE_LOCATION_NAME => 'Location'
+
         ]);
+
         $config->setSortable([
-            PyzAntelopeTableMap::COL_IDANTELOPE,
-            PyzAntelopeTableMap::COL_NAME,
-            PyzAntelopeTableMap::COL_COLOR,
-            PyzAntelopeTableMap::COL_LOCATION_ID,
-            PyzAntelopeLocationTableMap::COL_LOCATION_NAME,
-            PyzAntelopeTypeTableMap::COL_TYPE_NAME,
+            static::COL_ID_ANTELOPE,
+            static::COL_NAME,
+            static::COL_ANTELOPE_LOCATION_NAME
+
         ]);
+
         $config->setSearchable([
-            PyzAntelopeTableMap::COL_IDANTELOPE,
-            PyzAntelopeTableMap::COL_NAME,
-            PyzAntelopeTableMap::COL_COLOR,
-            PyzAntelopeLocationTableMap::COL_LOCATION_NAME,
-            PyzAntelopeTypeTableMap::COL_TYPE_NAME,
+            static::COL_ID_ANTELOPE,
+            static::COL_NAME,
+            static::COL_ANTELOPE_LOCATION_NAME
         ]);
-        $config->addRawColumn(self::TABLE_COL_ACTION);
 
         return $config;
     }
 
     /**
-     * @param \Spryker\Zed\Gui\Communication\Table\TableConfiguration $config
+     * @param TableConfiguration $config
      *
-     * @return array<int, mixed>
+     * @return array
      */
     protected function prepareData(TableConfiguration $config): array
     {
-        $antelopeCollection = $this->runQuery(
-            $this->antelopeQuery,
+        $query = $this->antelopeQuery->leftJoinPyzAntelopeLocation();
+        $antelopeEntityCollection = $this->runQuery(
+            $query,
             $config,
             true,
         );
-        $results = [];
 
-        foreach ($antelopeCollection as $antelopeEntity) {
-            /**
-             * @var \Orm\Zed\AntelopeLocation\Persistence\Base\PyzAntelopeLocation $location
-             * @var \Orm\Zed\AntelopeType\Persistence\PyzAntelopeType $type
-             */
-            $location = $antelopeEntity->getPyzAntelopeLocation();
-            $type = $antelopeEntity->getPyzAntelopeType();
-            $result[PyzAntelopeTableMap::COL_IDANTELOPE] = $antelopeEntity->getIdAntelope();
-            $result[PyzAntelopeTableMap::COL_COLOR] = $antelopeEntity->getColor();
-            $result[PyzAntelopeTableMap::COL_NAME] = $antelopeEntity->getName();
-            $result[PyzAntelopeTableMap::COL_LOCATION_ID] = $antelopeEntity->getLocationId();
-            $result[PyzAntelopeLocationTableMap::COL_LOCATION_NAME] = $location->getLocationName();
-            $result[PyzAntelopeTypeTableMap::COL_TYPE_NAME] = $type->getTypeName();
-            $result[static::TABLE_COL_ACTION] = $this->createButtons($antelopeEntity);
-            $results[] = $result;
+        if (!$antelopeEntityCollection->count()) {
+            return [];
         }
 
-        return $results;
+        return $this->mapReturns($antelopeEntityCollection);
     }
 
-    protected function createButtons(PyzAntelope $antelopeEntity): string
+    /**
+     * @param ObjectCollection<PyzAntelope> $antelopeEntityCollection
+     *
+     * @return array<int, mixed>
+     */
+    protected function mapReturns(ObjectCollection $antelopeEntityCollection): array
     {
-        $buttons = [];
-        $urlEdit = Url::generate(
-            '/antelope-gui/edit',
-            ['id-antelope' => $antelopeEntity->getIdantelope()],
-        );
-        $urlRemove = Url::generate(
-            '/antelope-gui/delete',
-            ['id-antelope' => $antelopeEntity->getIdantelope()],
-        );
-        $urlView = Url::generate(
-            '/antelope-gui/view',
-            ['id-antelope' => $antelopeEntity->getIdantelope()],
-        );
+        $returns = [];
+        /** @var PyzAntelope $antelopeEntity */
+        foreach ($antelopeEntityCollection as $antelopeEntity) {
+            $antelopeLocation = $antelopeEntity->getPyzAntelopeLocation();
+            $locationName = $antelopeLocation ? $antelopeLocation->getLocationName() : '';
+            $returns[] = [
+                static::COL_ID_ANTELOPE => $antelopeEntity->getIdAntelope(),
+                static::COL_ANTELOPE_LOCATION_NAME => $locationName,
+                static::COL_NAME => $antelopeEntity->getName(),
+            ];
+        }
 
-        $buttons[] = $this->generateRemoveButton($urlRemove, 'Delete antelope');
-        $buttons[] = $this->generateEditButton($urlEdit, 'Edit antelope');
-        $buttons[] = $this->generateViewButton($urlView, 'View antelope');
-
-        return implode(' ', $buttons);
+        return $returns;
     }
 }

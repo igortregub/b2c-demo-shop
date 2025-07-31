@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Pyz\Glue\AntelopeLocationsBackendApi\Plugin;
@@ -13,41 +19,34 @@ use Spryker\Glue\GlueJsonApiConventionExtension\Dependency\Plugin\JsonApiResourc
 
 class AntelopeLocationsBackendApiResourcePlugin extends AbstractResourcePlugin implements JsonApiResourceInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function getType(): string
     {
         return AntelopeLocationsBackendApiConfig::RESOURCE_ANTELOPE_LOCATIONS;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getController(): string
     {
         return AntelopeLocationsResourceController::class;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDeclaredMethods(): GlueResourceMethodCollectionTransfer
     {
         $attributes = AntelopeLocationsBackendApiAttributesTransfer::class;
 
-        $glueResourceMethodCollectionTransfer = new GlueResourceMethodCollectionTransfer();
-        return $glueResourceMethodCollectionTransfer
-            ->setGetCollection(
-                $this->getGlueResourceMethodConfigurationTransfer()->setAttributes($attributes)
-            )
-            ->setPost(
-                $this->getGlueResourceMethodConfigurationTransfer()->setAttributes($attributes)
-            )
-            ->setGet(
-                $this->getGlueResourceMethodConfigurationTransfer()->setAttributes($attributes)
-            )
-            ->setPatch(
-                $this->getGlueResourceMethodConfigurationTransfer()->setAttributes($attributes)
-            )
-            ->setDelete(
-                $this->getGlueResourceMethodConfigurationTransfer()
-            );
-    }
-
-    private function getGlueResourceMethodConfigurationTransfer(): GlueResourceMethodConfigurationTransfer
-    {
-        return new GlueResourceMethodConfigurationTransfer();
+        return (new GlueResourceMethodCollectionTransfer())
+            ->setGetCollection((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
+            ->setPost((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
+            ->setGet((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
+            ->setPatch((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
+            ->setDelete(new GlueResourceMethodConfigurationTransfer());
     }
 }

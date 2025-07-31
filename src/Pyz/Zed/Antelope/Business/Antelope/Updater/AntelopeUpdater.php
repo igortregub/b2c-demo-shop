@@ -1,15 +1,19 @@
 <?php
-declare(strict_types=1);
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Pyz\Zed\Antelope\Business\Antelope\Updater;
 
 use Generated\Shared\Transfer\AntelopeTransfer;
 use Pyz\Zed\Antelope\Persistence\AntelopeEntityManagerInterface;
 
-readonly class AntelopeUpdater implements AntelopeUpdaterInterface
+class AntelopeUpdater implements AntelopeUpdaterInterface
 {
     public function __construct(
-        private AntelopeEntityManagerInterface $antelopeEntityManager,
+        protected AntelopeEntityManagerInterface $antelopeEntityManager,
     ) {
     }
 

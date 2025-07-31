@@ -1,32 +1,32 @@
 <?php
-declare(strict_types=1);
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Pyz\Glue\AntelopeLocationsBackendApi;
 
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationCreator;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationCreatorInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationDeleter;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationExpander;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationExpanderInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationMapper;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationMapperInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationReader;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationReaderInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationResponseBuilder;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationResponseBuilderInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ErrorResponseBuilder;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ErrorResponseBuilderInterface;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeLocationUpdater;
-use Pyz\Glue\AntelopeLocationsBackendApi\Processor\AntelopeUpdaterInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Creator\AntelopeLocationCreator;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Creator\AntelopeLocationCreatorInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Deleter\AntelopeLocationDeleter;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Expander\AntelopeLocationExpander;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Expander\AntelopeLocationExpanderInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Mapper\AntelopeLocationMapper;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Mapper\AntelopeLocationMapperInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Reader\AntelopeLocationReader;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Reader\AntelopeLocationReaderInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ResponseBuilder\AntelopeLocationResponseBuilder;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ResponseBuilder\AntelopeLocationResponseBuilderInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ResponseBuilder\ErrorResponseBuilder;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\ResponseBuilder\ErrorResponseBuilderInterface;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Updater\AntelopeLocationUpdater;
+use Pyz\Glue\AntelopeLocationsBackendApi\Processor\Updater\AntelopeUpdaterInterface;
 use Pyz\Zed\Antelope\Business\AntelopeFacadeInterface;
 use Spryker\Glue\Kernel\Backend\AbstractFactory;
-use Spryker\Glue\Kernel\Exception\Container\ContainerKeyNotFoundException;
 
 class AntelopeLocationsBackendApiFactory extends AbstractFactory
 {
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function createAntelopeLocationReader(): AntelopeLocationReaderInterface
     {
         return new AntelopeLocationReader(
@@ -37,9 +37,6 @@ class AntelopeLocationsBackendApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function getAntelopeFacade(): AntelopeFacadeInterface
     {
         return $this->getProvidedDependency(AntelopeLocationsBackendApiDependencyProvider::FACADE_ANTELOPE);
@@ -60,9 +57,6 @@ class AntelopeLocationsBackendApiFactory extends AbstractFactory
         return new ErrorResponseBuilder();
     }
 
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function createAntelopeLocationWriter(): AntelopeLocationCreatorInterface
     {
         return new AntelopeLocationCreator(
@@ -77,9 +71,6 @@ class AntelopeLocationsBackendApiFactory extends AbstractFactory
         return new AntelopeLocationMapper();
     }
 
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function createAntelopeLocationUpdater(): AntelopeUpdaterInterface
     {
         return new AntelopeLocationUpdater(
@@ -89,9 +80,6 @@ class AntelopeLocationsBackendApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function createAntelopeLocationDeleter(): AntelopeLocationDeleter
     {
         return new AntelopeLocationDeleter(

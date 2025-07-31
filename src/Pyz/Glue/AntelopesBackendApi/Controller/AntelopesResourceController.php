@@ -1,46 +1,58 @@
 <?php
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Pyz\Glue\AntelopesBackendApi\Controller;
 
-use Generated\Shared\Transfer\AntelopeCriteriaTransfer;
 use Generated\Shared\Transfer\AntelopesBackendApiAttributesTransfer;
 use Generated\Shared\Transfer\GlueRequestTransfer;
-use Generated\Shared\Transfer\GlueResourceTransfer;
 use Generated\Shared\Transfer\GlueResponseTransfer;
-use Pyz\Glue\AntelopesBackendApi\AntelopesBackendApiConfig;
-use Pyz\Glue\AntelopesBackendApi\AntelopesBackendApiFactory;
 use Spryker\Glue\Kernel\Backend\Controller\AbstractController;
-use Spryker\Glue\Kernel\Exception\Container\ContainerKeyNotFoundException;
 
 /**
- * @method AntelopesBackendApiFactory getFactory()
+ * @method \Pyz\Glue\AntelopesBackendApi\AntelopesBackendApiFactory getFactory()
  */
 class AntelopesResourceController extends AbstractController
 {
-    /**
-     * @throws ContainerKeyNotFoundException
-     */
     public function getCollectionAction(GlueRequestTransfer $glueRequestTransfer): GlueResponseTransfer
     {
-        $antelopeCriteriaTransfer = new AntelopeCriteriaTransfer();
-        $antelopes = $this->getFactory()
-            ->getAntelopeFacade()
-            ->getAntelopeCollection($antelopeCriteriaTransfer)
-            ->getAntelopes();
-        $responseTransfer = new GlueResponseTransfer();
+        return $this->getFactory()->createAntelopeReader()->getAntelopeCollection($glueRequestTransfer);
+    }
 
-        foreach ($antelopes as $antelope) {
-            $resource = new GlueResourceTransfer();
-            $resource->setType(AntelopesBackendApiConfig::RESOURCE_ANTELOPES);
-            $resource->setId('' . $antelope->getIdAntelope());
-            $attributes = new AntelopesBackendApiAttributesTransfer();
-            $attributes->fromArray($antelope->toArray(), true);
+    public function getAction(GlueRequestTransfer $glueRequestTransfer): GlueResponseTransfer
+    {
+        return $this->getFactory()->createAntelopeReader()->getAntelope($glueRequestTransfer);
+    }
 
-            $resource->setAttributes($attributes);
-            $responseTransfer->addResource($resource);
-        }
+    public function postAction(
+        AntelopesBackendApiAttributesTransfer $antelopesBackendApiAttributesTransfer,
+        GlueRequestTransfer $glueRequestTransfer,
+    ): GlueResponseTransfer {
+        return $this->getFactory()->createAntelopeWriter()->createAntelope(
+            $antelopesBackendApiAttributesTransfer,
+            $glueRequestTransfer,
+        );
+    }
 
-        return $responseTransfer;
+    public function patchAction(
+        AntelopesBackendApiAttributesTransfer $antelopesBackendApiAttributesTransfer,
+        GlueRequestTransfer $glueRequestTransfer,
+    ): GlueResponseTransfer {
+        $antelopesBackendApiAttributesTransfer->setIdAntelope((int)$glueRequestTransfer->getResource()?->getId());
+
+        return $this->getFactory()->createAntelopeUpdater()->updateAntelope(
+            $antelopesBackendApiAttributesTransfer,
+            $glueRequestTransfer,
+        );
+    }
+
+    public function deleteAction(GlueRequestTransfer $glueRequestTransfer): GlueResponseTransfer
+    {
+        return $this->getFactory()->createAntelopeDeleter()->deleteAntelope($glueRequestTransfer);
     }
 }

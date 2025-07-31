@@ -70,6 +70,7 @@
         <property name="lastPage" type="int"/>
         <property name="nextPage" type="int"/>
         <property name="previousPage" type="int"/>
+
     </transfer>
     <transfer name="AntelopeCondition">
         <property name="antelopeIds" singular="antelopeId" type="int[]"/>

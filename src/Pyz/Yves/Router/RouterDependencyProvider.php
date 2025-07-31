@@ -7,6 +7,7 @@
 
 namespace Pyz\Yves\Router;
 
+use Pyz\Yves\AntelopePage\Plugin\Router\AntelopePageRouteProviderPlugin;
 use Pyz\Yves\ExampleProductSalePage\Plugin\Router\ExampleProductSaleRouteProviderPlugin;
 use Spryker\Yves\HealthCheck\Plugin\Router\HealthCheckRouteProviderPlugin;
 use Spryker\Yves\Router\Plugin\RouteManipulator\LanguageDefaultPostAddRouteManipulatorPlugin;
@@ -128,6 +129,7 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
             new OrderCustomReferenceWidgetAsyncRouteProviderPlugin(),
             new ProductComparisonPageRouteProviderPlugin(),
             new TrainingPageRouteProviderPlugin(),
+            new AntelopePageRouteProviderPlugin()
         ];
     }
 

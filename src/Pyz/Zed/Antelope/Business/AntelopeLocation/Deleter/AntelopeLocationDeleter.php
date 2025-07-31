@@ -1,5 +1,9 @@
 <?php
-declare(strict_types=1);
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Pyz\Zed\Antelope\Business\AntelopeLocation\Deleter;
 
@@ -12,8 +16,8 @@ class AntelopeLocationDeleter
     {
     }
 
-    public function deleteAntelopeLocation(AntelopeLocationTransfer $locationTransfer): int
+    public function deleteAntelopeLocation(AntelopeLocationTransfer $antelopeLocationTransfer): int
     {
-        return $this->antelopeEntityManager->deleteAntelopeLocation($locationTransfer);
+        return $this->antelopeEntityManager->deleteAntelopeLocation($antelopeLocationTransfer);
     }
 }

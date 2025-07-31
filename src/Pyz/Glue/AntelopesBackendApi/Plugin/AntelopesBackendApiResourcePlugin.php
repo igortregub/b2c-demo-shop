@@ -1,5 +1,9 @@
 <?php
-declare(strict_types=1);
+
+/**
+ * This file is part of the Spryker Commerce OS.
+ * For full license information, please view the LICENSE file that was distributed with this source code.
+ */
 
 namespace Pyz\Glue\AntelopesBackendApi\Plugin;
 
@@ -35,15 +39,13 @@ class AntelopesBackendApiResourcePlugin extends AbstractResourcePlugin implement
     public function getDeclaredMethods(): GlueResourceMethodCollectionTransfer
     {
         $collection = new GlueResourceMethodCollectionTransfer();
+        $method = new GlueResourceMethodConfigurationTransfer();
         $attributes = AntelopesBackendApiAttributesTransfer::class;
+        $method->setAttributes($attributes);
 
+        $collection->setGetCollection($method);
 
         $collection->setGet((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
-            ->setGetCollection(
-                (new GlueResourceMethodConfigurationTransfer())
-                    ->setAction('getCollectionAction')
-                    ->setAttributes($attributes)
-            )
             ->setPost((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
             ->setPatch((new GlueResourceMethodConfigurationTransfer())->setAttributes($attributes))
             ->setDelete(new GlueResourceMethodConfigurationTransfer());
@@ -51,4 +53,3 @@ class AntelopesBackendApiResourcePlugin extends AbstractResourcePlugin implement
         return $collection;
     }
 }
-
