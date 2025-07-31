@@ -1,9 +1,5 @@
 <?php
-
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace Pyz\Zed\Antelope\Business;
 
@@ -17,7 +13,7 @@ use Generated\Shared\Transfer\AntelopeResponseTransfer;
 use Generated\Shared\Transfer\AntelopeTransfer;
 
 /**
- * @method \Pyz\Zed\Antelope\Business\AntelopeBusinessFactory getFactory()
+ * @method AntelopeBusinessFactory getFactory()
  */
 interface AntelopeFacadeInterface
 {
@@ -39,9 +35,20 @@ interface AntelopeFacadeInterface
         AntelopeLocationCriteriaTransfer $antelopeLocationCriteria,
     ): AntelopeLocationResponseTransfer;
 
-    public function getAntelopeLocationCollection(AntelopeLocationCriteriaTransfer $criteriaTransfer): AntelopeLocationCollectionTransfer;
+    public function getAntelopeLocationCollection(AntelopeLocationCriteriaTransfer $criteriaTransfer
+    ): AntelopeLocationCollectionTransfer;
 
-    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer): AntelopeCollectionTransfer;
+    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer
+    ): AntelopeCollectionTransfer;
 
     public function getAntelopeLocations(): AntelopeLocationCollectionTransfer;
+
+    public function updateAntelope(AntelopeTransfer $antelopeTransfer): AntelopeTransfer;
+
+    public function deleteAntelope(AntelopeTransfer $antelopeTransfer): int;
+
+    public function deleteAntelopeLocation(AntelopeLocationTransfer $antelopeLocationTransfer): int;
+
+    public function updateAntelopeLocation(AntelopeLocationTransfer $antelopeLocationTransfer
+    ): AntelopeLocationTransfer;
 }

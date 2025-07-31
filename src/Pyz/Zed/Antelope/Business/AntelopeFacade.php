@@ -1,9 +1,5 @@
 <?php
-
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace Pyz\Zed\Antelope\Business;
 
@@ -15,12 +11,15 @@ use Generated\Shared\Transfer\AntelopeLocationResponseTransfer;
 use Generated\Shared\Transfer\AntelopeLocationTransfer;
 use Generated\Shared\Transfer\AntelopeResponseTransfer;
 use Generated\Shared\Transfer\AntelopeTransfer;
+use Pyz\Zed\Antelope\Persistence\AntelopeEntityManagerInterface;
+use Pyz\Zed\Antelope\Persistence\AntelopeRepositoryInterface;
+use Pyz\Zed\Antelope\Persistence\Exception\EntityNotFoundException;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 /**
- * @method \Pyz\Zed\Antelope\Business\AntelopeBusinessFactory getFactory()
- * @method \Pyz\Zed\Antelope\Persistence\AntelopeEntityManagerInterface getEntityManager()
- * @method \Pyz\Zed\Antelope\Persistence\AntelopeRepositoryInterface getRepository()
+ * @method AntelopeBusinessFactory getFactory()
+ * @method AntelopeEntityManagerInterface getEntityManager()
+ * @method AntelopeRepositoryInterface getRepository()
  */
 class AntelopeFacade extends AbstractFacade implements AntelopeFacadeInterface
 {
@@ -29,44 +28,75 @@ class AntelopeFacade extends AbstractFacade implements AntelopeFacadeInterface
         return $this->getFactory()->createAntelopeWriter()->createAntelope($antelopeTransfer);
     }
 
+    /**
+     * @throws EntityNotFoundException
+     */
     public function getAntelopeLocationById(
         int $idLocation,
     ): ?AntelopeLocationTransfer {
-        return $this->getFactory()->createAntelopeLocationReader()->getAntelopeLocationById($idLocation);
+        return $this->getFactory()
+            ->createAntelopeLocationReader()
+            ->getAntelopeLocationById($idLocation);
     }
 
     public function getAntelope(
         AntelopeCriteriaTransfer $antelopeCriteriaTransfer,
     ): AntelopeResponseTransfer {
-        return $this->getFactory()->createAntelopeReader()->getAntelope($antelopeCriteriaTransfer);
+        return $this->getFactory()
+            ->createAntelopeReader()
+            ->getAntelope($antelopeCriteriaTransfer);
     }
 
     public function createAntelopeLocation(
         AntelopeLocationTransfer $antelopeLocationTransfer,
     ): AntelopeLocationTransfer {
-        return $this->getFactory()->createAntelopeLocationWriter()->createAntelopeLocation($antelopeLocationTransfer);
+        return $this->getFactory()
+            ->createAntelopeLocationWriter()
+            ->createAntelopeLocation($antelopeLocationTransfer);
     }
 
     public function getAntelopeLocation(
         AntelopeLocationCriteriaTransfer $antelopeLocationCriteria,
     ): AntelopeLocationResponseTransfer {
-        return $this->getFactory()->createAntelopeLocationReader()->getAntelopeLocation($antelopeLocationCriteria);
+        return $this->getFactory()
+            ->createAntelopeLocationReader()
+            ->getAntelopeLocation($antelopeLocationCriteria);
     }
 
-    public function getAntelopeLocationCollection(AntelopeLocationCriteriaTransfer $antelopeLocationCriteriaTransfer): AntelopeLocationCollectionTransfer
-    {
-        return $this->getFactory()->createAntelopeLocationReader()->getAntelopeLocationCollection(
-            $antelopeLocationCriteriaTransfer,
-        );
+    public function getAntelopeLocationCollection(AntelopeLocationCriteriaTransfer $criteriaTransfer
+    ): AntelopeLocationCollectionTransfer {
+        return $this->getFactory()
+            ->createAntelopeLocationReader()
+            ->getAntelopeLocationCollection($criteriaTransfer);
     }
 
-    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer): AntelopeCollectionTransfer
-    {
+    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer
+    ): AntelopeCollectionTransfer {
         return $this->getFactory()->createAntelopeReader()->getAntelopeCollection($antelopeCriteriaTransfer);
     }
 
     public function getAntelopeLocations(): AntelopeLocationCollectionTransfer
     {
         return $this->getFactory()->createAntelopeLocationReader()->getAntelopeLocations();
+    }
+
+    public function updateAntelope(AntelopeTransfer $antelopeTransfer): AntelopeTransfer
+    {
+        return $this->getFactory()->createAntelopeUpdater()->updateAntelope($antelopeTransfer);
+    }
+
+    public function deleteAntelope(AntelopeTransfer $antelopeTransfer): int
+    {
+        return $this->getFactory()->createAntelopeDeleter()->deleteAntelope($antelopeTransfer);
+    }
+
+    public function deleteAntelopeLocation(AntelopeLocationTransfer $antelopeLocationTransfer): int
+    {
+        return $this->getFactory()->createAntelopeLocationDeleter()->deleteAntelopeLocation($antelopeLocationTransfer);
+    }
+
+    public function updateAntelopeLocation(AntelopeLocationTransfer $antelopeLocationTransfer): AntelopeLocationTransfer
+    {
+        return $this->getFactory()->createAntelopeLocationUpdater()->updateAntelopeLocation($antelopeLocationTransfer);
     }
 }

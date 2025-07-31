@@ -1,9 +1,5 @@
 <?php
-
-/**
- * This file is part of the Spryker Commerce OS.
- * For full license information, please view the LICENSE file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace Pyz\Zed\Antelope\Persistence;
 
@@ -16,15 +12,16 @@ use Generated\Shared\Transfer\AntelopeLocationTransfer;
 use Generated\Shared\Transfer\AntelopeTransfer;
 use Pyz\Zed\Antelope\Persistence\Exception\EntityNotFoundException;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
+use Spryker\Zed\Propel\Business\Exception\AmbiguousComparisonException;
 
 /**
- * @method \Pyz\Zed\Antelope\Persistence\AntelopePersistenceFactory getFactory()
+ * @method AntelopePersistenceFactory getFactory()
  */
 class AntelopeRepository extends AbstractRepository implements
     AntelopeRepositoryInterface
 {
     /**
-     * @throws \Pyz\Zed\Antelope\Persistence\Exception\EntityNotFoundException
+     * @throws EntityNotFoundException|AmbiguousComparisonException
      */
     public function getAntelope(
         AntelopeCriteriaTransfer $antelopeCriteriaTransfer,
@@ -56,7 +53,7 @@ class AntelopeRepository extends AbstractRepository implements
     }
 
     /**
-     * @throws \Pyz\Zed\Antelope\Persistence\Exception\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     public function getAntelopeLocationById(int $idLocation): AntelopeLocationResponseTransfer
     {
@@ -78,7 +75,7 @@ class AntelopeRepository extends AbstractRepository implements
     }
 
     /**
-     * @throws \Pyz\Zed\Antelope\Persistence\Exception\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     public function getAntelopeLocationByName(string $antelopeLocationName): AntelopeLocationResponseTransfer
     {
@@ -100,25 +97,22 @@ class AntelopeRepository extends AbstractRepository implements
     }
 
     public function findAntelopeLocationCollection(
-        AntelopeLocationCriteriaTransfer $criteriaTransfer,
+        AntelopeLocationCriteriaTransfer $antelopeLocationCriteriaTransfer,
     ): AntelopeLocationCollectionTransfer {
-        return $this->getAntelopeLocations($criteriaTransfer);
+        return $this->getAntelopeLocations($antelopeLocationCriteriaTransfer);
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\AntelopeLocationCriteriaTransfer $criteriaTransfer
-     *
-     * @return \Generated\Shared\Transfer\AntelopeLocationCollectionTransfer
-     */
-    public function getAntelopeLocations(AntelopeLocationCriteriaTransfer $criteriaTransfer): AntelopeLocationCollectionTransfer
-    {
-        $query = $this->getFactory()->createAntelopeLocationQuery();
 
-        if ($criteriaTransfer->getLocationName() !== null) {
-            $query->filterByLocationName($criteriaTransfer->getLocationName());
+    public function getAntelopeLocations(AntelopeLocationCriteriaTransfer $antelopeLocationCriteriaTransfer
+    ): AntelopeLocationCollectionTransfer {
+        $query = $this->getFactory()->createAntelopeLocationQuery();
+        $name = $antelopeLocationCriteriaTransfer->getAntelopeLocationsConditions()->getName();
+        if ($name) {
+            $query->filterByLocationName($name);
         }
-        if ($criteriaTransfer->getIdAntelopeLocation() !== null) {
-            $query->filterByLocationName($criteriaTransfer->getIdAntelopeLocation());
+        $idLocation = $antelopeLocationCriteriaTransfer->getAntelopeLocationsConditions()->getIdAntelopeLocation();
+        if ($idLocation) {
+            $query->filterByIdAntelopeLocation($idLocation);
         }
 
         $antelopeLocations = $query->find();
@@ -130,8 +124,8 @@ class AntelopeRepository extends AbstractRepository implements
         );
     }
 
-    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer): AntelopeCollectionTransfer
-    {
+    public function getAntelopeCollection(AntelopeCriteriaTransfer $antelopeCriteriaTransfer
+    ): AntelopeCollectionTransfer {
         $query = $this->getFactory()->createAntelopeQuery();
 
         if ($antelopeCriteriaTransfer->getName() !== null) {
